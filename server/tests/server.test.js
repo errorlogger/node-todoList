@@ -4,7 +4,7 @@ const request = require('supertest');
 const { app } = require('./../server');
 const { Todo } = require('./../models/todo');
 
-
+// appelé avant chaque test
 beforeEach((done) => {
     Todo.remove({}).then(() => {
         done();
