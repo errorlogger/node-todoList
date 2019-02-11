@@ -9,6 +9,8 @@ let { Todo } = require('./models/todo');
 
 
 var app = express();
+//heroku port
+const port = process.env.PORT || 3000;
 
 //MIDDLEWARES
 
@@ -54,8 +56,8 @@ app.post("/todos", (req, res) => {
     })
 
 })
-app.listen(3000, () => {
-    console.log("server sur port 3000")
+app.listen(port, () => {
+    console.log("server sur port : ", port)
 })
 
 module.exports = { app };
