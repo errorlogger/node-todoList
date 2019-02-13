@@ -23,6 +23,19 @@ app.get("/", (req, res) => {
     res.send("<h1>BIENVENU SUR L'APPLI !</h1>")
 })
 
+app.get('/todos', (req, res) => {
+    Todo.find({}).then((todos) => {
+
+        if (!todos) {
+            res.send('aucun élément trouvé !');
+        } else {
+            res.send({ todos });
+        }
+
+    }).catch((err) => {
+        res.status(400).send(err)
+    })
+})
 
 app.get('/todos/:id', (req, res) => {
     let id = req.params.id;
@@ -30,7 +43,7 @@ app.get('/todos/:id', (req, res) => {
     if (ObjectId.isValid(id)) {
         Todo.findById(id).then((todo) => {
             if (todo) {
-                res.send(todo);
+                res.send({ todo });
             } else {
                 res.status(404).send("aucun élément")
             }
@@ -46,9 +59,9 @@ app.get('/todos/:id', (req, res) => {
 app.post("/todos", (req, res) => {
     let dataTodo = req.body
     let newTodo = new Todo(dataTodo);
-    newTodo.save().then((doc) => {
-        console.log('voici la nouvelle tache : ', doc);
-        res.send("ok nouvelle tache enregistrée")
+    newTodo.save().then((todo) => {
+
+        res.send({ todo })
 
     }).catch((err) => {
         console.log('il y a eu une erreur : ', err)
@@ -56,6 +69,25 @@ app.post("/todos", (req, res) => {
     })
 
 })
+
+app.delete('/todos/:id', ((req, res) => {
+    let id = req.params.id;
+
+    if (ObjectId.isValid(id)) {
+        Todo.findByIdAndRemove(id).then((todo) => {
+            if (doc) {
+                res.send({ todo })
+            } else {
+                res.status(404).send('id non-trouvée')
+            }
+
+        }).catch((err) => {
+            res.status(400).send('une erreur s\'est produite')
+        })
+    } else {
+        res.status(404).send('id non valide')
+    }
+}))
 app.listen(port, () => {
     console.log("server sur port : ", port)
 })
