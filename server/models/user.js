@@ -48,10 +48,8 @@ let UserSchema = new mongoose.Schema(
 )
 
 UserSchema.methods.toJSON = function () {
-    let user = this;
-    let userObject = user.toObject();
 
-    return _.pick(userObject, ['_id', 'firstName', 'lastName', 'email'])
+    return _.pick(this.toObject(), ['_id', 'firstName', 'lastName', 'email'])
 }
 
 UserSchema.methods.generateAuthToken = function () {
@@ -74,6 +72,21 @@ UserSchema.methods.generateAuthToken = function () {
     })
 }
 
+UserSchema.statics.findByToken = function (token) {
+    let decoded;
+
+    try {
+        decoded = jwt.verify(token, 'mySecret')
+    } catch (err) {
+        return Promise.reject('Le token ne correspond pas')
+    }
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+
+    })
+}
 
 let User = mongoose.model('User', UserSchema);
 

@@ -7,6 +7,7 @@ const _ = require('lodash')
 let { mongoose } = require('./database/mongoose');
 let { User } = require('./models/user');
 let { Todo } = require('./models/todo');
+let { authToken } = require('./middlewares/authToken');
 
 
 var app = express();
@@ -16,6 +17,7 @@ const port = process.env.PORT;
 //MIDDLEWARES
 
 app.use(bodyParser.json());
+
 
 
 //ROUTES
@@ -137,9 +139,12 @@ app.post('/users', (req, res) => {
             console.error(err.message)
             res.status(400).send(err)
         })
-
-
 })
+
+app.get('/users/me', authToken, (req, res) => {
+    res.send(req.user)
+})
+
 app.listen(port, () => {
     console.log("server sur port : ", port)
 })
